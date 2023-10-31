@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {getDownloadURL, getStorage, ref, uploadBytesResumable} from "firebase/storage"
 import { app } from '../firebase'
-import { deleteUserFalilure, deleteUserStart, deleteUserSuccess, updateUserFailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice'
+import { deleteUserFalilure, deleteUserStart, deleteUserSuccess, logOutUserFalilure, logOutUserStart, logOutUserSuccess, updateUserFailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice'
 import { deleteUser } from 'firebase/auth'
 
 const Profile = () => {
@@ -86,6 +86,22 @@ const Profile = () => {
           dispatch(deleteUserFalilure(error.message))
       }
   }
+
+  const handlesignout = async()=>{
+    try {
+        dispatch(logOutUserStart())
+        const res = await fetch('/api/auth/signout')  
+        const data = await res.json();
+        if(data.success === false){
+          dispatch(logOutUserFalilure(data.message))
+          return;
+        }
+        dispatch(logOutUserSuccess(data.message))
+    } catch (error) {
+      dispatch(logOutUserFalilure(error.message))
+      // console.log(error)
+    }
+  }
   useEffect(()=>{
     if(file){
       handleFileUpload(file)
@@ -123,7 +139,7 @@ const Profile = () => {
       </form>
       <div className='flex justify-between mt-5'>
         <span className='text-red-700 cursor-pointer ' onClick={deleteAccount}>Delete Account</span>
-        <span className='text-red-700 cursor-pointer '>Sign out</span>
+        <span onClick={handlesignout} className='text-red-700 cursor-pointer '>Sign out</span>
       </div>
 
       <p className='text-red-700 m-5'>{error ? error : ""}</p>
