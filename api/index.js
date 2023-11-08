@@ -13,6 +13,7 @@ mongoose.connect(process.env.MONGO).then(()=>{
     console.log('connected to mongodb')
 }).catch((error) => {
     console.log(error)
+    console.log("hello")
 })
 
 app.listen(3000, ()=>{
